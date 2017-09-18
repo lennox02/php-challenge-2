@@ -7,7 +7,7 @@
  * dates with a specific number of scores, identify users with highscore by
  * date, and identify dates when a user was in a top percentile
  *
- * PHP version 7
+ * PHP version 5
  *
  * @author     James Webb <jameswebbdev@gmail.com>
  * @link       https://github.com/melvinmt/php-challenge-2/blob/master/solution.php
@@ -15,15 +15,31 @@
  */
 
 /**
- * Parse request
+ * Undoes the encryption from make_request() and parses the request into
+ * original payload components
  *
  * @param $request
  * @param $secret
- * @return
+ * @return array|false
  */
 function parse_request($request, $secret)
 {
-    // YOUR CODE GOES HERE
+    //break the request back into components
+    $request = strtr($request, '-_', '+/');
+    $components = explode('.', $request);
+
+    //decode payload
+    $payload = base64_decode($components[1]);
+
+    //decode signature and return false if not as expected
+    $signature = base64_decode($components[0]);
+    $expectedSignature = hash_hmac('sha256', $payload, $secret);
+    if ($signature != $expectedSignature) {
+        return false;
+    }
+
+    return json_decode($payload, true);
+
 }
 
 /**
