@@ -3,7 +3,7 @@
 /**
  * Solution functions
  *
- * Functions that allow the unit tests to parse an icoming request, identify
+ * Functions that allow the unit tests to parse an incoming request, identify
  * dates with a specific number of scores, identify users with highscore by
  * date, and identify dates when a user was in a top percentile
  *
@@ -13,6 +13,7 @@
  * @link       https://github.com/melvinmt/php-challenge-2/blob/master/solution.php
  * @since      File available since Release 1.0.0
  */
+
 
 /**
  * Undoes the encryption from make_request() and parses the request into
@@ -42,6 +43,7 @@ function parse_request($request, $secret)
 
 }
 
+
 /**
  * List of dates with at least a specific number of scores
  *
@@ -51,8 +53,21 @@ function parse_request($request, $secret)
  */
 function dates_with_at_least_n_scores($pdo, $n)
 {
-    // YOUR CODE GOES HERE
+    $sql = "
+        SELECT date
+        FROM scores
+        GROUP BY date
+        HAVING COUNT(*) >= :n
+        ORDER BY date DESC
+    ";
+
+    $query = $pdo->prepare($sql);
+    $query->bindValue(':n', $n, PDO::PARAM_INT);
+    $query->execute();
+
+    return $query->fetchAll(PDO::FETCH_COLUMN);
 }
+
 
 /**
  * List of users with top score on date
@@ -65,6 +80,7 @@ function users_with_top_score_on_date($pdo, $date)
 {
     // YOUR CODE GOES HERE
 }
+
 
 /**
  * List of dates when user was in specified top percentile
