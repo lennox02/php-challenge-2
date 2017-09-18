@@ -44,7 +44,6 @@ $correct = ["2017-09-02"];
 $actual  = dates_with_at_least_n_scores($pdo, 3);
 assert($correct == $actual);
 
-die();
 
 populate_db_from_csv($pdo, "./data/data-2.csv");
 

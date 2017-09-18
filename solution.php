@@ -62,7 +62,7 @@ function dates_with_at_least_n_scores($pdo, $n)
     ";
 
     $query = $pdo->prepare($sql);
-    $query->bindValue(':n', $n, PDO::PARAM_INT);
+    $query->bindParam(':n', $n, PDO::PARAM_INT); //bind param as int only
     $query->execute();
 
     return $query->fetchAll(PDO::FETCH_COLUMN);
@@ -78,7 +78,22 @@ function dates_with_at_least_n_scores($pdo, $n)
  */
 function users_with_top_score_on_date($pdo, $date)
 {
-    // YOUR CODE GOES HERE
+    $sql = "
+      SELECT user_id
+      FROM scores
+      WHERE date = :date AND score = (
+        SELECT MAX(score)
+        FROM scores
+        WHERE date = :date
+        GROUP BY date
+      )
+    ";
+
+    $query = $pdo->prepare($sql);
+    $query->bindParam(':date', $date, PDO::PARAM_STR); //bind param as string only
+    $query->execute();
+
+    return $query->fetchAll(PDO::FETCH_COLUMN);
 }
 
 
